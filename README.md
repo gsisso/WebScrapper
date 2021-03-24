@@ -37,3 +37,4 @@ Afterwards it builds a random array of URL's that were preset, adds each URL syn
 5. Add `insert_time` and `updated_time` in `web_links` schema to be able to have better understanding of our data and being able to parse again when a certain time has passed
 6. Split `server.ts` and `worker.ts` to 2 different services
 7. OOP ?
+8. Add tests
