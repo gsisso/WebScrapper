@@ -1,8 +1,8 @@
-import {pool} from '../../../data/mariadb'
+import {getConnection} from '../../../data/mariadb'
 
 export async function AddWebContent(content: IWebContent): Promise<void> {
     try {
-        await pool.query("INSERT INTO web_links (url,content) VALUES (?,?)",
+        await (await getConnection()).query("INSERT INTO web_links (url,content) VALUES (?,?)",
             [content.url, content.html]);
     }catch (err){
         //throw an error unless its due to duplicate entry
@@ -14,7 +14,7 @@ export async function AddWebContent(content: IWebContent): Promise<void> {
 }
 
 export async function WebURLExists(url: string): Promise<boolean> {
-    const res = await pool.query("SELECT COUNT(*) as counter FROM web_links WHERE url=?", [url]);
+    const res = await (await getConnection()).query("SELECT COUNT(*) as counter FROM web_links WHERE url=?", [url]);
 
     return res?.[0]?.counter != 0;
 }

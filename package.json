@@ -4,9 +4,11 @@
   "description": "Scrapping the web",
   "main": "index.js",
   "scripts": {
-    "start": "npm run tsc && node ./dist/server.js",
+    "start": "npm run tsc && concurrently --kill-others \"npm run worker\" \"npm run server\" ",
     "tsc": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "worker": "node ./dist/worker.js",
+    "server": "node ./dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -15,10 +17,12 @@
   "author": "Gal Sisso",
   "license": "ISC",
   "dependencies": {
+    "@types/amqplib": "^0.5.17",
     "@types/express": "^4.17.11",
     "amqplib": "^0.7.1",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
+    "concurrently": "^6.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",

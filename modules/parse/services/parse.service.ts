@@ -1,5 +1,6 @@
 import {AddWebContent, WebURLExists} from "../../web_content/daos/web_content.dao";
 import axios from 'axios';
+import {AddWebLinkToQueue} from "../../web_links/daos/web_links.dao";
 
 export async function parseWebURLService(link: string) {
     if(await WebURLExists(link)){
@@ -10,7 +11,6 @@ export async function parseWebURLService(link: string) {
     try {
         parseResponse = await parse(link);
     } catch (err) {
-        console.log(err);
         throw new Error(`Failed to parse url '${link}' due to: ${err}`);
     }
     const webContent: IWebContent = {
@@ -23,13 +23,12 @@ export async function parseWebURLService(link: string) {
         throw new Error(`Failed to add web content: ${err}`);
     }
 
-    //TODO: replace with rabbitmq (or other messaging service) to add other links to the queue
-
     const promiseList: Promise<void>[] = [];
     parseResponse.links.forEach((link: string) => {
-       promiseList.push(parseWebURLService(link));
+       promiseList.push(AddWebLinkToQueue(link));
     });
     // wait for all requests to complete
+    //TODO: handle promise rejection (delete record from DB?)
     await Promise.all(promiseList);
 }
 
@@ -39,7 +38,7 @@ async function parse(link: string): Promise<IParseURLResponse> {
     const html = (await axios.get(link)).data;
 
     //start parse links (mock)
-    const randomLinks = ["https://google.com", "https://amazon.com", "https://lusha.com", "https://www.autodepot.co.il", "https://apple.com", "https://nasdaq.com"];
+    const randomLinks = ["https://google.com", "https://amazon.com", "https://lusha.com", "https://www.autodepot.co.il", "https://apple.com", "https://nasdaq.com","https://ksp.co.il/web/","https://www.ivory.co.il/","https://www.zap.co.il/","https://www.rabbitmq.com//"];
 
     const numberOfLinks = Math.floor(Math.random() * Math.floor(randomLinks.length)) + 1;
     const links = [];
