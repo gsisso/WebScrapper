@@ -1,4 +1,4 @@
-# Lusha
+# WebScrapper
 Simple web scrapper
 
 
